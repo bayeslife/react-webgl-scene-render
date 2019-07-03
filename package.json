@@ -1,0 +1,24 @@
+{
+  "name": "react-webgl-scene-render",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "builder run archetype:demo",
+    "test": "builder run archetype:test",
+    "build": "builder run archetype:build",
+    "lint": "builder run archetype:lint",
+    "prepublishOnly": "builder run archetype:prepublishOnly"
+  },
+  "author": "bayeslife",
+  "license": "MIT",
+  "dependencies": {
+    "d3-scale": "^3.0.0",
+    "short-interval-control-archetype-react-component": "^1.0.11",
+    "three": "^0.106.2"
+  },
+  "devDependencies": {
+    "builder": "^4.0.0",
+    "short-interval-control-archetype-react-component-dev": "^1.0.11"
+  }
+}
