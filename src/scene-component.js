@@ -16,102 +16,129 @@ let doublesWidthScale = scaleLinear().domain([-100,100]).range([-doublesCourtWid
 let singlesWidthScale = scaleLinear().domain([-100,100]).range([-singlesCourtWidth/2,singlesCourtWidth/2])
 let netHeightScale = scaleLinear().domain([0,100]).range([0,netHeight])
 
-const SceneComponent =  () => {
+const DISTANCE_FROM_BALL = 4 //A higher value is further away from the ball
+
+const HEIGHT_ABOVE_COURT = 1.75 //A higher value is further away from the ball
+
+let ballposition = {
+  x:-courtLengthScale(100),
+  y: tennisBallDiametetr,
+  z: 0
+}
+
+let renderBall = (scene) =>{
+  var geometry = new SphereGeometry( tennisBallDiametetr/2, 8, 8 );
+  var material = new MeshBasicMaterial( { color: 0x00ff00 } );
+  var ball = new Mesh( geometry, material );
+  ball.position.x=ballposition.x
+  ball.position.y=ballposition.y
+  ball.position.z=ballposition.z
+  scene.add( ball  );
+}
+
+
+let renderCourt = (scene) =>{
+  var material = new LineBasicMaterial( { color: 'teal' , linewidth: 1} );
+
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, -doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, -doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, doublesWidthScale(100)) )
+    var doublesLine = new Line( geometry, material );
+    scene.add(doublesLine)
+  }
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, -singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, -singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, singlesWidthScale(100)) )
+    var singlesLine = new Line( geometry, material );
+    scene.add(singlesLine)
+  }
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, 0))
+    geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, 0))
+    var centerLine = new Line( geometry, material );
+    scene.add(centerLine)
+  }
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( courtLengthScale(50) , 0, -singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(50) , 0, singlesWidthScale(100)))
+    var serviceLine1 = new Line( geometry, material );
+    scene.add(serviceLine1)
+  }
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( -courtLengthScale(50) , 0, -singlesWidthScale(100)))
+    geometry.vertices.push(new Vector3( -courtLengthScale(50) , 0, singlesWidthScale(100)))
+    var serviceLine2 = new Line( geometry, material );
+    scene.add(serviceLine2)
+  }
+  {
+    var geometry = new Geometry();
+    geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), -doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(100), doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(100), -doublesWidthScale(100)))
+    geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), -doublesWidthScale(100)))
+    var net = new Line( geometry, material );
+    scene.add(net)
+  }
+}
+
+
+const SceneComponent =  (props) => {
 
     let setup = ()=>{
 
-      const container = document.getElementById('thecontainer');
+      let {
+        distance=DISTANCE_FROM_BALL, 
+        imageWidth=window.innerWidth,
+        imageHeight=window.innerHeight,
+        height=window.innerHeight,
+      } = props
 
-      var scene = new Scene();
-      var camera = new PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      camera.position.set( 0, 20, 0 );
+      const container = document.getElementById('thescene');
+
+      let scene = new Scene();
+      let camera = new PerspectiveCamera( distance, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      camera.position.set( 0, HEIGHT_ABOVE_COURT, 0 ); //This set up the Y dimension to be above the X,Z plane
 
       var renderer = new WebGLRenderer();
-      renderer.setSize( window.innerWidth, window.innerHeight );
-      //renderer.setSize( 224, 224 );
+      renderer.setSize( imageWidth, imageHeight );
       container.appendChild( renderer.domElement );
 
-      var geometry = new SphereGeometry( tennisBallDiametetr, 8, 8 );
-      var material = new MeshBasicMaterial( { color: 0x00ff00 } );
-      var ball = new Mesh( geometry, material );
-      ball.position.x=-courtLengthScale(100)
-      ball.position.y=tennisBallDiametetr
-      ball.position.z=0
-      scene.add( ball  );
-
-      var material = new LineBasicMaterial( { color: 'teal' , linewidth: 1} );
-
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, -doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, -doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, doublesWidthScale(100)) )
-        var doublesLine = new Line( geometry, material );
-        scene.add(doublesLine)
-      }
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, -singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, -singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, singlesWidthScale(100)) )
-        var singlesLine = new Line( geometry, material );
-        scene.add(singlesLine)
-      }
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( courtLengthScale(100) , 0, 0))
-        geometry.vertices.push(new Vector3( -courtLengthScale(100) , 0, 0))
-        var centerLine = new Line( geometry, material );
-        scene.add(centerLine)
-      }
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( courtLengthScale(50) , 0, -singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(50) , 0, singlesWidthScale(100)))
-        var serviceLine1 = new Line( geometry, material );
-        scene.add(serviceLine1)
-      }
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( -courtLengthScale(50) , 0, -singlesWidthScale(100)))
-        geometry.vertices.push(new Vector3( -courtLengthScale(50) , 0, singlesWidthScale(100)))
-        var serviceLine2 = new Line( geometry, material );
-        scene.add(serviceLine2)
-      }
-      {
-        var geometry = new Geometry();
-        geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), -doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(100), doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(100), -doublesWidthScale(100)))
-        geometry.vertices.push(new Vector3( courtLengthScale(0) , netHeightScale(0), -doublesWidthScale(100)))
-        var net = new Line( geometry, material );
-        scene.add(net)
-      }
-
+      renderBall(scene)
+      renderCourt(scene)
+  
       let direction=1
       function animate() {
         requestAnimationFrame( animate );
         render()
       }
       //var speed = 3.14/4;
+
+      let viewradius = courtLength
+
       function render() {
         var speed = Date.now() * 0.0001;
-        camera.position.x = Math.cos(speed) * 70;
-        camera.position.z = Math.sin(speed) * 70;
-      
+        camera.position.x = ballposition.x + Math.cos(speed) * viewradius ;
+        camera.position.z = ballposition.z + Math.sin(speed) * viewradius;
         camera.lookAt(-courtLengthScale(100) , 0, 0)
         renderer.render(scene, camera);
       }
       animate();
     }
-    
+
     useEffect(setup)
-    return <div id="thecontainer"/>
+    return <div id="thescene"/>
   }
 
     

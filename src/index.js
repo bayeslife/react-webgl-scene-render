@@ -3,11 +3,11 @@ import React, { useReducer } from 'react';
 import SceneComponent from './scene-component';
 //import { reducer, click } from './click-reducer';
 
-const ContainerComponent = () => {
+const ContainerComponent = (props) => {
   //const [clicks, dispatch] = useReducer(reducer, reducer());
-  return <SceneComponent
+  return <SceneComponent {...props} 
     //clicks={ clicks }
-    //onClick={() => dispatch(click())}
+    //onClick={() => dispatch (click())}
   />
 }
 
