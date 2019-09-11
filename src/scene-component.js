@@ -16,7 +16,7 @@ let doublesWidthScale = scaleLinear().domain([-100,100]).range([-doublesCourtWid
 let singlesWidthScale = scaleLinear().domain([-100,100]).range([-singlesCourtWidth/2,singlesCourtWidth/2])
 let netHeightScale = scaleLinear().domain([0,100]).range([0,netHeight])
 
-const DISTANCE_FROM_BALL = 4 //A higher value is further away from the ball
+const CAMERA_DISTANCE_FROM_BALL = courtLength //A higher value is further away from the ball
 
 const HEIGHT_ABOVE_COURT = 1.75 //A higher value is further away from the ball
 
@@ -34,6 +34,7 @@ let renderBall = (scene) =>{
   ball.position.y=ballposition.y
   ball.position.z=ballposition.z
   scene.add( ball  );
+  return ball
 }
 
 
@@ -99,7 +100,7 @@ const SceneComponent =  (props) => {
     let setup = ()=>{
 
       let {
-        distance=DISTANCE_FROM_BALL, 
+        distance=CAMERA_DISTANCE_FROM_BALL, 
         imageWidth=window.innerWidth,
         imageHeight=window.innerHeight,
         height=window.innerHeight,
@@ -115,23 +116,30 @@ const SceneComponent =  (props) => {
       renderer.setSize( imageWidth, imageHeight );
       container.appendChild( renderer.domElement );
 
-      renderBall(scene)
+      let ball = renderBall(scene)
       renderCourt(scene)
   
-      let direction=1
+
       function animate() {
         requestAnimationFrame( animate );
         render()
       }
       //var speed = 3.14/4;
 
-      let viewradius = courtLength
+      let viewradius = courtLength/2
 
+      let direction=1
       function render() {
         var speed = Date.now() * 0.0001;
+
+        direction = direction ? (ball.position.x > courtLength/2 ? -1 : direction) : (ball.position.x < -(courtLength/2) ? 1 : direction)  
+
+        console.log(`${ball.position.x}: ${-courtLength/22}`)
+        ball.position.x += 0.1 * direction 
         camera.position.x = ballposition.x + Math.cos(speed) * viewradius ;
         camera.position.z = ballposition.z + Math.sin(speed) * viewradius;
         camera.lookAt(-courtLengthScale(100) , 0, 0)
+        renderBall(scene)
         renderer.render(scene, camera);
       }
       animate();
