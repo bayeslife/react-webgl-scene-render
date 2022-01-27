@@ -15,7 +15,7 @@
   "dependencies": {
     "d3-scale": "^3.0.0",
     "short-interval-control-archetype-react-component": "^1.0.11",
-    "three": "^0.106.2"
+    "three": "^0.137.0"
   },
   "devDependencies": {
     "builder": "^4.0.0",
