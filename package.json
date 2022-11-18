@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "builder": "^4.0.0",
-    "short-interval-control-archetype-react-component-dev": "^1.0.11"
+    "short-interval-control-archetype-react-component-dev": "^1.4.0"
   }
 }
